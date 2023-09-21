@@ -38,11 +38,11 @@ namespace Web.Controllers
         }
 
         [HttpDelete]
-        public ActionResult Delete([FromQuery] int studentId)
+        public ActionResult Delete([FromQuery] int programId)
         {
-            if (myPrograms.Any(t => t.Id == studentId))
+            if (myPrograms.Any(t => t.Id == programId))
             {
-                _ = myPrograms.Remove(myPrograms.First(t => t.Id == studentId));
+                _ = myPrograms.Remove(myPrograms.First(t => t.Id == programId));
                 return Ok();
             }
             return NotFound("This is an invalid student id, not found in memory !!");

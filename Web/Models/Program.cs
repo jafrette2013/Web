@@ -1,18 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Web.Models
+namespace Web.Models;
+
+public partial class Program
 {
-    public class Program
+    public int Id { get; set; }
 
-    {
-        [Required]
-        [Range(0, 30)]
-        public int Id { get; set; }
+    public string? Name { get; set; }
 
-        [MaxLength(10)]
-        [Required]
-        public string Name { get; set; }
+    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
-     
-    }
+    public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }

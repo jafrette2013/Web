@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 namespace Web.Models;
 
-public partial class Student
+public partial class Course
 {
     public int Id { get; set; }
 
     public int? ProgramId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
-    public DateTime DateOfBirth { get; set; }
-
-    public string? PhoneNumber { get; set; }
+    public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
     public virtual Program? Program { get; set; }
 }
