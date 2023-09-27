@@ -16,4 +16,6 @@ public partial class Class
     public virtual Course? Course { get; set; }
 
     public virtual Staff? Staff { get; set; }
+
+    public virtual ICollection<StudentClass> StudentClasses { get; set; } = new List<StudentClass>();
 }

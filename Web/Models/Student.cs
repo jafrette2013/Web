@@ -15,5 +15,7 @@ public partial class Student
 
     public string? PhoneNumber { get; set; }
 
-    public virtual Program? Program { get; set; }
+    public virtual AcademicProgram? AcademicProgram { get; set; }
+
+    public virtual ICollection<StudentClass> StudentClasses { get; set; } = new List<StudentClass>();
 }

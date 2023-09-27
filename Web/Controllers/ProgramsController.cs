@@ -1,51 +1,79 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Web.Data;
+using Web.Models;
 
-using models = Web.Models;
-
-namespace Web.Controllers
+namespace AGMU.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class ProgramsController : ControllerBase
+    [Route("[controller]")]
+    public class AcademicProgramsController : ControllerBase
     {
-        private static List<models.Program> myPrograms = new List<models.Program>();
+        private readonly AgmuContext _agmuDbContext;
+
+        public AcademicProgramsController(AgmuContext agmuDbContext)
+        {
+            this._agmuDbContext = agmuDbContext;
+        }
 
         [HttpGet]
-        public IEnumerable<models.Program> Get()
+        public async Task<IEnumerable<AcademicProgram>> Get()
         {
-            return myPrograms.OrderByDescending(t => t.Id);
+            return await _agmuDbContext.AcademicPrograms
+            .AsNoTracking()
+            .Select(t => new AcademicProgram
+            {
+                Id = t.Id,
+                Name = t.Name
+            })
+            .ToListAsync();
+        }
+
+        [HttpGet("ById")]
+        public async Task<AcademicProgram?> Get([FromQuery] int academicProgramId)
+        {
+            return await _agmuDbContext.AcademicPrograms
+            .AsNoTracking() 
+            .Select(t => new AcademicProgram
+            {
+                Id = t.Id,
+                Name = t.Name
+            })
+            .FirstOrDefaultAsync(t => t.Id == academicProgramId);
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] models.Program request)
+        public async Task<ActionResult> Post([FromBody] AcademicProgram request)
         {
-            myPrograms.Add(request);
+            _ = _agmuDbContext.AcademicPrograms.Add(request);
+            _ = await _agmuDbContext.SaveChangesAsync();
             return Ok();
         }
-        [HttpPut]
-        public ActionResult Put([FromBody] models.Program request)
 
+        [HttpPut]
+        public async Task<ActionResult> Put([FromBody] AcademicProgram request)
         {
-            if (myPrograms.Any(t => t.Id == request.Id))
+            var dbAcademicProgram = await _agmuDbContext.AcademicPrograms.FirstOrDefaultAsync(t => t.Id == request.Id);
+            if (dbAcademicProgram == null)
             {
-                _ = myPrograms.Remove(myPrograms.First(t => t.Id == request.Id));
-                myPrograms.Add(request);
-                return Ok();
+                return NotFound("Invalid academic program Id");
             }
-            return NotFound("This is an invalid student id, not found in memory !!");
+            dbAcademicProgram.Name = request.Name;
+            _ = await _agmuDbContext.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpDelete]
-        public ActionResult Delete([FromQuery] int programId)
+        public async Task<ActionResult> Delete([FromQuery] int academicProgramId)
         {
-            if (myPrograms.Any(t => t.Id == programId))
+            var dbAcademicProgram = await _agmuDbContext.AcademicPrograms.FirstOrDefaultAsync(t => t.Id == academicProgramId);
+            if (dbAcademicProgram == null)
             {
-                _ = myPrograms.Remove(myPrograms.First(t => t.Id == programId));
-                return Ok();
+                return NotFound("Invalid academic program Id");
             }
-            return NotFound("This is an invalid student id, not found in memory !!");
+            _ = _agmuDbContext.AcademicPrograms.Remove(dbAcademicProgram);
+            _ = await _agmuDbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

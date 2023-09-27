@@ -13,5 +13,5 @@ public partial class Course
 
     public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
-    public virtual Program? Program { get; set; }
+    public virtual AcademicProgram? Program { get; set; }
 }

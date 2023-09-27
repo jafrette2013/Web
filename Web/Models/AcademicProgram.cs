@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Web.Models;
 
-public partial class Program
+public partial class AcademicProgram
 {
     public int Id { get; set; }
 
